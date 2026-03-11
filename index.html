@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>排序演算法實作評量系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f1a;--surface:#161829;--surface2:#1e2138;--border:#2e3358;--accent:#5b8cff;--accent2:#ff6b9d;--accent3:#43e8a0;--text:#e8eaf6;--muted:#7b82b0;--correct:#43e8a0;--wrong:#ff5c7a;--warn:#ffbe45;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(91,140,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(91,140,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.wrap{max-width:800px;width:90%;padding:40px 20px;position:relative;z-index:1;text-align:center;}
+header{margin-bottom:50px;}
+.badge{display:inline-block;background:rgba(91,140,255,0.12);border:1px solid rgba(91,140,255,0.3);border-radius:100px;padding:5px 16px;font-size:11px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:14px;}
+h1{font-size:clamp(28px,6vw,48px);font-weight:900;line-height:1.2;background:linear-gradient(135deg,#e8eaf6,#5b8cff,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+.sub{color:var(--muted);font-size:16px;letter-spacing:1px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px;}
+@media(max-width:600px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;text-decoration:none;color:var(--text);transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;transition:opacity .3s;}
+.card:hover{transform:translateY(-8px);background:var(--surface2);border-color:var(--accent);box-shadow:0 12px 30px rgba(0,0,0,0.4);}
+.c1::before{background:linear-gradient(90deg,var(--accent2),#7b6fff);}
+.c2::before{background:linear-gradient(90deg,var(--accent3),var(--accent));}
+.icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px;transition:transform .3s;}
+.card:hover .icon{transform:scale(1.1) rotate(5deg);}
+.i1{background:rgba(255,107,157,0.15);color:var(--accent2);}
+.i2{background:rgba(67,232,160,0.15);color:var(--accent3);}
+.card-title{font-size:20px;font-weight:700;margin-bottom:12px;}
+.card-desc{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;flex-grow:1;}
+.btn{padding:10px 24px;border-radius:10px;font-size:14px;font-weight:700;background:rgba(255,255,255,0.05);border:1px solid var(--border);transition:all .2s;}
+.card:hover .btn{background:var(--text);color:var(--bg);border-color:var(--text);}
+footer{margin-top:60px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">Algorithm Lab</div>
+    <h1>排序演算法實作評量</h1>
+    <p class="sub">Insertion · Selection · Bubble Sort</p>
+  </header>
+  <div class="grid">
+    <a href="exam.html" class="card c1">
+      <div class="icon i1">📝</div>
+      <div class="card-title">考試版</div>
+      <div class="card-desc">正式評量工具。包含成績自動上傳功能，適合課堂測驗與正式記錄。</div>
+      <div class="btn">進入測驗</div>
+    </a>
+    <a href="practice.html" class="card c2">
+      <div class="icon i2">💡</div>
+      <div class="card-title">練習版</div>
+      <div class="card-desc">自主練習工具。提供排序法詳細說明與每輪即時批改回饋。</div>
+      <div class="btn">開始練習</div>
+    </a>
+  </div>
+  <footer>&copy; 2024 Sorting Algorithm Quiz System</footer>
+</div>
+</body>
+</html>
