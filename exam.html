@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>排序演算法實作評量【考試版】</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f1a;--surface:#161829;--surface2:#1e2138;--border:#2e3358;--accent:#5b8cff;--accent2:#ff6b9d;--accent3:#43e8a0;--text:#e8eaf6;--muted:#7b82b0;--correct:#43e8a0;--wrong:#ff5c7a;--warn:#ffbe45;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(91,140,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(91,140,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.wrap{max-width:980px;margin:0 auto;padding:40px 20px 100px;position:relative;z-index:1;}
+header{text-align:center;margin-bottom:40px;}
+.badge{display:inline-block;background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.3);border-radius:100px;padding:5px 16px;font-size:11px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:14px;}
+h1{font-size:clamp(24px,4vw,42px);font-weight:900;line-height:1.1;background:linear-gradient(135deg,#e8eaf6,#5b8cff,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.sub{color:var(--muted);font-size:13px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:18px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));}
+
+/* Setup */
+.setup-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:6px;}
+@media(max-width:560px){.setup-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:360px){.setup-grid{grid-template-columns:1fr;}}
+label{display:block;font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;}
+select,input[type=text]{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;cursor:pointer;}
+select:focus,input[type=text]:focus{border-color:var(--accent);}
+select option{background:var(--surface2);color:var(--text);}
+.select-wrap{position:relative;}
+.select-wrap::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:12px;}
+input[type=number]{width:43px;padding:7px 2px;border:1.5px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;text-align:center;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s;-moz-appearance:textfield;}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+input[type=number]:focus{border-color:var(--accent);}
+input[type=number].ok{border-color:var(--correct)!important;background:rgba(67,232,160,0.08)!important;color:var(--correct)!important;}
+input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,92,122,0.08)!important;color:var(--wrong)!important;}
+.btn-start{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),#7b6fff);color:#fff;border:none;border-radius:10px;font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;transition:all .2s;}
+.btn-start:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(91,140,255,0.35);}
+.rules{color:var(--muted);font-size:13px;line-height:2.2;padding-left:18px;}
+.rules strong{color:var(--text);}
+
+/* Info bar */
+.info-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
+.stag{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--muted);}
+.stag strong{color:var(--text);}
+.btn-sm{padding:7px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-family:'Noto Sans TC',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Section */
+.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.sec-dot{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.d1{background:rgba(91,140,255,0.18);color:var(--accent);}
+.d2{background:rgba(255,107,157,0.18);color:var(--accent2);}
+.d3{background:rgba(67,232,160,0.18);color:var(--accent3);}
+.sec-name{font-size:15px;font-weight:700;}
+.sec-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.orig-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.orig-lbl{font-size:11px;color:var(--muted);width:64px;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{background:rgba(255,190,69,0.12);border:1px solid rgba(255,190,69,0.35);border-radius:6px;padding:5px 8px;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--warn);min-width:36px;text-align:center;}
+.divider{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.rnd{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.rnd-lbl{font-size:11px;color:var(--muted);width:64px;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.rnd-inputs{display:flex;gap:4px;flex-wrap:wrap;}
+.stag-score{font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;padding:3px 9px;border-radius:5px;flex-shrink:0;min-width:46px;text-align:center;visibility:hidden;}
+.stag-score.show{visibility:visible;}
+.sp-full{background:rgba(67,232,160,0.15);color:var(--correct);border:1px solid rgba(67,232,160,0.3);}
+.sp-part{background:rgba(255,190,69,0.15);color:var(--warn);border:1px solid rgba(255,190,69,0.3);}
+.sp-zero{background:rgba(255,92,122,0.15);color:var(--wrong);border:1px solid rgba(255,92,122,0.3);}
+.ans-row{display:flex;align-items:center;gap:4px;margin:2px 0 10px 72px;flex-wrap:wrap;visibility:hidden;}
+.ans-row.show{visibility:visible;}
+.ans-lbl{font-size:10px;color:var(--muted);}
+.ans-chip{font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(67,232,160,0.08);border:1px solid rgba(67,232,160,0.25);border-radius:4px;padding:1px 5px;color:var(--correct);}
+.btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent3),#29c87e);color:#0d1a12;border:none;border-radius:10px;font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;transition:all .2s;}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(67,232,160,0.3);}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+#resultCard{display:none;background:linear-gradient(135deg,rgba(91,140,255,0.07),rgba(255,107,157,0.07));border:1px solid var(--border);border-radius:16px;padding:32px;text-align:center;margin-top:12px;}
+.res-big{font-size:76px;font-weight:900;font-family:'JetBrains Mono',monospace;background:linear-gradient(135deg,var(--accent3),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.res-max{font-size:20px;color:var(--muted);margin-top:2px;}
+.res-who{font-size:14px;color:var(--muted);margin-top:8px;}
+.res-who strong{color:var(--text);}
+.sub-scores{display:flex;gap:12px;justify-content:center;margin:18px 0 6px;flex-wrap:wrap;}
+.sub-sc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:100px;}
+.sub-sc-name{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.sub-sc-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent3);}
+.status-msg{font-size:12px;color:var(--muted);margin:8px 0;min-height:18px;}
+.res-btns{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.btn-res{padding:9px 20px;border-radius:8px;font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .15s;}
+.btn-res:hover{border-color:var(--accent);color:var(--accent);}
+.btn-res.primary{background:linear-gradient(135deg,var(--accent),#7b6fff);color:#fff;border-color:transparent;}
+#overlay{display:none;position:fixed;inset:0;background:rgba(13,15,26,0.85);z-index:99;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+#overlay.on{display:flex;}
+.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent3);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.spin-txt{font-size:13px;color:var(--text);}
+#quizScreen{display:none;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media print{.info-bar,.btn-submit,.res-btns,#overlay{display:none!important;}}
+</style>
+</head>
+<body>
+<div id="overlay"><div class="spin"></div><div class="spin-txt">傳送成績中…</div></div>
+<div class="wrap">
+  <header>
+    <div class="badge">考試版 · 正式評量</div>
+    <h1>排序演算法實作評量</h1>
+    <p class="sub">Insertion Sort · Selection Sort · Bubble Sort</p>
+  </header>
+
+  <div id="setupScreen">
+    <div class="card">
+      <div class="setup-grid">
+        <div>
+          <label>班級</label>
+          <div class="select-wrap">
+            <select id="sclass">
+              <option value="">請選擇班級</option>
+              <option>801</option><option>802</option><option>803</option><option>804</option><option>805</option>
+              <option>806</option><option>807</option><option>808</option><option>809</option><option>810</option>
+              <option>811</option><option>812</option><option>813</option><option>814</option><option>815</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>座號</label>
+          <div class="select-wrap">
+            <select id="sseat">
+              <option value="">請選擇座號</option>
+              <script>for(let i=1;i<=32;i++)document.write(`<option>${i}</option>`);</script>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>學生姓名</label>
+          <input type="text" id="sname" placeholder="請輸入姓名">
+        </div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">開始作答</button>
+    </div>
+    <div class="card">
+      <ul class="rules">
+        <li>系統自動產生 <strong>隨機 7 個數字</strong>，三題共用同一組</li>
+        <li>三種排序法各 6 輪，<strong>提交後</strong>才顯示分數與正確答案</li>
+        <li>每輪滿分 <strong>6 分</strong>，差 1 個扣 1 分，滿分 <strong>108 分</strong></li>
+        <li>提交後成績自動送至老師 Google 試算表</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="quizScreen">
+    <div class="info-bar">
+      <div class="stag" id="stagEl"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm" onclick="regenerate()">🎲 重新出題</button>
+        <button class="btn-sm" onclick="clearAll()">清除作答</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-hd"><div class="sec-dot d1">1</div><div><div class="sec-name">插入排序法（Insertion Sort）</div><div class="sec-desc">每輪將一個元素插入已排序部分的正確位置，由小至大</div></div></div>
+      <div class="orig-row"><div class="orig-lbl">原始資料</div><div class="chips" id="q1orig"></div></div>
+      <hr class="divider"><div id="q1rows"></div>
+    </div>
+    <div class="card">
+      <div class="sec-hd"><div class="sec-dot d2">2</div><div><div class="sec-name">選擇排序法（Selection Sort）</div><div class="sec-desc">每輪從未排序部分找出最小值，移至前方，由小至大</div></div></div>
+      <div class="orig-row"><div class="orig-lbl">原始資料</div><div class="chips" id="q2orig"></div></div>
+      <hr class="divider"><div id="q2rows"></div>
+    </div>
+    <div class="card">
+      <div class="sec-hd"><div class="sec-dot d3">3</div><div><div class="sec-name">氣泡排序法（Bubble Sort）</div><div class="sec-desc">每輪相鄰元素比較並交換，最大值逐漸浮至末端，由小至大</div></div></div>
+      <div class="orig-row"><div class="orig-lbl">原始資料</div><div class="chips" id="q3orig"></div></div>
+      <hr class="divider"><div id="q3rows"></div>
+    </div>
+    <button class="btn-submit" id="subBtn" onclick="submitQuiz()">提交並批改</button>
+    <div id="resultCard">
+      <div class="res-big" id="rScore">0</div>
+      <div class="res-max">/ 108 分</div>
+      <div class="res-who" id="rWho"></div>
+      <div class="sub-scores">
+        <div class="sub-sc"><div class="sub-sc-name">插入排序</div><div class="sub-sc-val" id="r1">—</div></div>
+        <div class="sub-sc"><div class="sub-sc-name">選擇排序</div><div class="sub-sc-val" id="r2">—</div></div>
+        <div class="sub-sc"><div class="sub-sc-name">氣泡排序</div><div class="sub-sc-val" id="r3">—</div></div>
+      </div>
+      <div class="status-msg" id="statusMsg"></div>
+      <div class="res-btns">
+        <button class="btn-res" onclick="regenerate()">🎲 再練一次</button>
+        <button class="btn-res primary" onclick="window.print()">列印成績</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// =====================================================
+// 【老師設定區】將下方換成您的 Apps Script 網址
+const SCRIPT_URL = 'https://script.google.com/a/macros/sdjh.tn.edu.tw/s/AKfycbyYaUPvEzxZlYmfRgEeNp-35r44br0L20rRbnrnQe8KNw7bAfJBE2kk1UUivrdIfKY/exec';
+// =====================================================
+const N=7,R=6;
+let nums=[],answers={1:[],2:[],3:[]};
+
+function rand(){const a=[];while(a.length<N){const n=Math.floor(Math.random()*97)+2;if(!a.includes(n))a.push(n);}return a;}
+function insSteps(a){a=[...a];const s=[];for(let i=1;i<a.length;i++){let k=a[i],j=i-1;while(j>=0&&a[j]>k){a[j+1]=a[j];j--;}a[j+1]=k;s.push([...a]);}return s;}
+function selSteps(a){a=[...a];const s=[];for(let i=0;i<a.length-1;i++){let m=i;for(let j=i+1;j<a.length;j++)if(a[j]<a[m])m=j;[a[i],a[m]]=[a[m],a[i]];s.push([...a]);}return s;}
+function bubSteps(a){a=[...a];const s=[];for(let i=0;i<a.length-1;i++){for(let j=0;j<a.length-1-i;j++)if(a[j]>a[j+1])[a[j],a[j+1]]=[a[j+1],a[j]];s.push([...a]);}return s;}
+
+function renderOrig(id,arr){document.getElementById(id).innerHTML=arr.map(n=>`<div class="chip">${n}</div>`).join('');}
+function renderRows(id,q){
+  const c=document.getElementById(id);c.innerHTML='';
+  for(let r=1;r<=R;r++){
+    const d=document.createElement('div');
+    d.innerHTML=`<div class="rnd"><div class="rnd-lbl">第${r}輪→</div><div class="rnd-inputs">${Array.from({length:N},(_,i)=>`<input type="number" id="q${q}r${r}i${i}" placeholder="?">`).join('')}</div><div class="stag-score" id="st${q}${r}"></div></div><div class="ans-row" id="ar${q}${r}"><span class="ans-lbl">正解：</span></div>`;
+    c.appendChild(d);
+  }
+}
+
+function startQuiz(){
+  const cl=document.getElementById('sclass').value;
+  const se=document.getElementById('sseat').value;
+  const nm=document.getElementById('sname').value.trim();
+  if(!cl||!se||!nm){alert('請選擇班級、座號並填入姓名');return;}
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('quizScreen').style.display='block';
+  document.getElementById('stagEl').innerHTML=`<strong>${cl}</strong> 班 &nbsp; <strong>${se}</strong> 號 &nbsp; ${nm}`;
+  gen();
+}
+
+function gen(){
+  nums=rand();
+  answers[1]=insSteps(nums);answers[2]=selSteps(nums);answers[3]=bubSteps(nums);
+  renderOrig('q1orig',nums);renderOrig('q2orig',nums);renderOrig('q3orig',nums);
+  renderRows('q1rows',1);renderRows('q2rows',2);renderRows('q3rows',3);
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('subBtn').disabled=false;
+  document.getElementById('statusMsg').textContent='';
+}
+function regenerate(){gen();}
+function clearAll(){
+  for(let q=1;q<=3;q++)for(let r=1;r<=R;r++){
+    for(let i=0;i<N;i++){const e=document.getElementById(`q${q}r${r}i${i}`);if(e){e.value='';e.className='';}}
+    const st=document.getElementById(`st${q}${r}`);if(st){st.textContent='';st.className='stag-score';}
+    const ar=document.getElementById(`ar${q}${r}`);if(ar){ar.className='ans-row';ar.innerHTML='<span class="ans-lbl">正解：</span>';}
+  }
+  document.getElementById('resultCard').style.display='none';
+}
+
+function gradeRound(q,r){
+  const correct=answers[q][Math.min(r-1,answers[q].length-1)];
+  let hits=0;
+  for(let i=0;i<N;i++){
+    const el=document.getElementById(`q${q}r${r}i${i}`);
+    const v=parseInt(el.value);
+    if(v===correct[i]){hits++;el.classList.add('ok');el.classList.remove('err');}
+    else{el.classList.add('err');el.classList.remove('ok');}
+  }
+  const pts=Math.max(0,hits-1);
+  const st=document.getElementById(`st${q}${r}`);
+  st.textContent=`${pts}分`;st.className=`stag-score show ${pts===6?'sp-full':pts>0?'sp-part':'sp-zero'}`;
+  const ar=document.getElementById(`ar${q}${r}`);
+  ar.className='ans-row show';
+  ar.innerHTML=`<span class="ans-lbl">正解：</span>`+correct.map(n=>`<span class="ans-chip">${n}</span>`).join('');
+  return pts;
+}
+
+async function submitQuiz(){
+  document.getElementById('subBtn').disabled=true;
+  let s1=0,s2=0,s3=0;
+  for(let r=1;r<=R;r++){s1+=gradeRound(1,r);s2+=gradeRound(2,r);s3+=gradeRound(3,r);}
+  const tot=s1+s2+s3;
+  document.getElementById('rScore').textContent=tot;
+  document.getElementById('r1').textContent=`${s1}/36`;
+  document.getElementById('r2').textContent=`${s2}/36`;
+  document.getElementById('r3').textContent=`${s3}/36`;
+  const cl=document.getElementById('sclass').value;
+  const se=document.getElementById('sseat').value;
+  const nm=document.getElementById('sname').value.trim();
+  document.getElementById('rWho').innerHTML=`<strong>${cl}</strong> 班 &nbsp; <strong>${se}</strong> 號 &nbsp; ${nm}`;
+  document.getElementById('resultCard').style.display='block';
+  const url=SCRIPT_URL&&SCRIPT_URL!=='貼上您的_Apps_Script_網址_在此'?SCRIPT_URL:'';
+  const msg=document.getElementById('statusMsg');
+  if(url){
+    document.getElementById('overlay').classList.add('on');
+    try{
+      await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({timestamp:new Date().toLocaleString('zh-TW'),class:cl,seat:se,studentName:nm,score1:s1,score2:s2,score3:s3,total:tot,numbers:nums.join(',')})});
+      msg.style.color='var(--correct)';msg.textContent='✓ 成績已傳送至老師的 Google 試算表';
+    }catch(e){msg.style.color='var(--wrong)';msg.textContent='✗ 傳送失敗，請截圖後交給老師';}
+    document.getElementById('overlay').classList.remove('on');
+  }else{msg.style.color='var(--warn)';msg.textContent='⚠ 尚未設定傳送網址';}
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
