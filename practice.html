@@ -40,7 +40,7 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 
 /* Hint box */
 .hint-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
-.hint-toggle{width:100%;padding:14px 20px;background:none;border:none;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;}
+.hint-toggle{width:100%;padding:14px 20px;background:none;border:none;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;}
 .hint-toggle:hover{background:rgba(91,140,255,0.06);}
 .hint-toggle .arrow{font-size:14px;color:var(--muted);transition:transform .2s;}
 .hint-toggle.open .arrow{transform:rotate(180deg);}
@@ -51,8 +51,8 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 .hint-content strong{color:var(--accent3);}
 .hint-step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
 .hint-num{background:rgba(91,140,255,0.18);color:var(--accent);border-radius:6px;padding:3px 10px;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700;flex-shrink:0;margin-top:2px;}
-.hint-txt{font-size:14px;color:var(--muted);line-height:1.8;}
-.hint-example{background:rgba(67,232,160,0.06);border:1px solid rgba(67,232,160,0.2);border-radius:10px;padding:14px 18px;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent3);line-height:1.9;}
+.hint-txt{font-size:15px;color:var(--muted);line-height:1.8;}
+.hint-example{background:rgba(67,232,160,0.06);border:1px solid rgba(67,232,160,0.2);border-radius:10px;padding:14px 18px;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--accent3);line-height:1.9;}
 
 /* Info bar */
 .info-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap;}
@@ -67,8 +67,8 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 .d1{background:rgba(91,140,255,0.18);color:var(--accent);}
 .d2{background:rgba(255,107,157,0.18);color:var(--accent2);}
 .d3{background:rgba(67,232,160,0.18);color:var(--accent3);}
-.sec-name{font-size:20px;font-weight:700;}
-.sec-desc{font-size:13px;color:var(--muted);margin-top:4px;}
+.sec-name{font-size:24px;font-weight:700;}
+.sec-desc{font-size:17px;color:var(--muted);margin-top:6px;line-height:1.5;}
 .orig-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
 .orig-lbl{font-size:17px;color:var(--muted);width:100px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:700;}
 .chips{display:flex;gap:10px;flex-wrap:wrap;}
@@ -77,15 +77,15 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 .rnd{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
 .rnd-lbl{font-size:17px;color:var(--muted);width:100px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:700;}
 .rnd-inputs{display:flex;gap:6px;flex-wrap:wrap;}
-.stag-score{font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700;padding:4px 12px;border-radius:6px;flex-shrink:0;min-width:54px;text-align:center;opacity:0;transition:opacity .2s;}
+.stag-score{font-size:15px;font-family:'JetBrains Mono',monospace;font-weight:700;padding:5px 14px;border-radius:6px;flex-shrink:0;min-width:60px;text-align:center;opacity:0;transition:opacity .2s;}
 .stag-score.show{opacity:1;}
 .sp-full{background:rgba(67,232,160,0.15);color:var(--correct);border:1px solid rgba(67,232,160,0.3);}
 .sp-part{background:rgba(255,190,69,0.15);color:var(--warn);border:1px solid rgba(255,190,69,0.3);}
 .sp-zero{background:rgba(255,92,122,0.15);color:var(--wrong);border:1px solid rgba(255,92,122,0.3);}
-.ans-row{display:flex;align-items:center;gap:6px;margin:4px 0 14px 92px;flex-wrap:wrap;opacity:0;transition:opacity .2s;}
+.ans-row{display:flex;align-items:center;gap:6px;margin:4px 0 14px 114px;flex-wrap:wrap;opacity:0;transition:opacity .2s;}
 .ans-row.show{opacity:1;}
-.ans-lbl{font-size:12px;color:var(--muted);}
-.ans-chip{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(67,232,160,0.08);border:1px solid rgba(67,232,160,0.25);border-radius:5px;padding:2px 8px;color:var(--correct);}
+.ans-lbl{font-size:14px;color:var(--muted);}
+.ans-chip{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(67,232,160,0.08);border:1px solid rgba(67,232,160,0.25);border-radius:5px;padding:3px 10px;color:var(--correct);}
 .btn-submit{width:100%;padding:18px;background:linear-gradient(135deg,var(--accent3),#29c87e);color:#0d1a12;border:none;border-radius:12px;font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-top:10px;transition:all .2s;}
 .btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(67,232,160,0.35);}
 .btn-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
@@ -96,11 +96,11 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 .res-who strong{color:var(--text);}
 .sub-scores{display:flex;gap:12px;justify-content:center;margin:18px 0 6px;flex-wrap:wrap;}
 .sub-sc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:100px;}
-.sub-sc-name{font-size:11px;color:var(--muted);margin-bottom:3px;}
-.sub-sc-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent3);}
-.status-msg{font-size:12px;color:var(--muted);margin:8px 0;min-height:18px;}
+.sub-sc-name{font-size:13px;color:var(--muted);margin-bottom:3px;}
+.sub-sc-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent3);}
+.status-msg{font-size:14px;color:var(--muted);margin:8px 0;min-height:18px;}
 .res-btns{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
-.btn-res{padding:9px 20px;border-radius:8px;font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .15s;}
+.btn-res{padding:12px 24px;border-radius:8px;font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .15s;}
 .btn-res:hover{border-color:var(--accent);color:var(--accent);}
 .btn-res.primary{background:linear-gradient(135deg,var(--accent),#7b6fff);color:#fff;border-color:transparent;}
 #overlay{display:none;position:fixed;inset:0;background:rgba(13,15,26,0.85);z-index:99;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
@@ -118,7 +118,7 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
   <header>
     <div class="badge">練習版 · 即時回饋</div>
     <h1>排序演算法實作練習</h1>
-    <p class="sub">Insertion Sort · Selection Sort · Bubble Sort</p>
+    <p class="sub">Selection · Insertion · Bubble Sort</p>
   </header>
 
   <div id="setupScreen">
@@ -170,26 +170,9 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
       </div>
     </div>
 
-    <!-- Q1 -->
+    <!-- Q1 (Selection) -->
     <div class="card">
-      <div class="sec-hd"><div class="sec-dot d1">1</div><div><div class="sec-name">插入排序法（Insertion Sort）</div><div class="sec-desc">每輪將一個元素插入已排序部分的正確位置，由小至大</div></div></div>
-      <div class="hint-box">
-        <button class="hint-toggle" onclick="toggleHint('h1',this)">💡 排序法說明 <span class="arrow">▾</span></button>
-        <div class="hint-content" id="h1">
-          <div class="hint-step"><span class="hint-num">觀念</span><div class="hint-txt">將陣列分為「已排序」和「未排序」兩部分。每輪取出未排序的第一個元素，往已排序部分從右往左比較，找到正確位置插入。</div></div>
-          <div class="hint-step"><span class="hint-num">第1輪</span><div class="hint-txt">取第2個元素，與第1個比較，決定是否插入到前面。</div></div>
-          <div class="hint-step"><span class="hint-num">第2輪</span><div class="hint-txt">取第3個元素，與已排序的前2個依序比較，找到正確位置插入。</div></div>
-          <div class="hint-step"><span class="hint-num">規律</span><div class="hint-txt">第 N 輪結束後，前 N+1 個元素已排序完成，其餘不動。</div></div>
-          <div class="hint-example">原始：[5, 3, 8, 1, 2]<br>第1輪：[3, 5, 8, 1, 2]  ← 3 插入到 5 前面<br>第2輪：[3, 5, 8, 1, 2]  ← 8 已在正確位置<br>第3輪：[1, 3, 5, 8, 2]  ← 1 插入到最前面<br>第4輪：[1, 2, 3, 5, 8]  ← 2 插入到 1 後面</div>
-        </div>
-      </div>
-      <div class="orig-row" style="margin-top:12px;"><div class="orig-lbl">原始資料</div><div class="chips" id="q1orig"></div></div>
-      <hr class="divider"><div id="q1rows"></div>
-    </div>
-
-    <!-- Q2 -->
-    <div class="card">
-      <div class="sec-hd"><div class="sec-dot d2">2</div><div><div class="sec-name">選擇排序法（Selection Sort）</div><div class="sec-desc">每輪從未排序部分找出最小值，移至前方，由小至大</div></div></div>
+      <div class="sec-hd"><div class="sec-dot d2">1</div><div><div class="sec-name">選擇排序法（Selection Sort）</div><div class="sec-desc">每輪從未排序部分找出最小值，移至前方，由小至大</div></div></div>
       <div class="hint-box">
         <button class="hint-toggle" onclick="toggleHint('h2',this)">💡 排序法說明 <span class="arrow">▾</span></button>
         <div class="hint-content" id="h2">
@@ -200,11 +183,28 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
           <div class="hint-example">原始：[5, 3, 8, 1, 2]<br>第1輪：[1, 3, 8, 5, 2]  ← 最小值 1 與 5 交換<br>第2輪：[1, 2, 8, 5, 3]  ← 最小值 2 與 3 交換<br>第3輪：[1, 2, 3, 5, 8]  ← 最小值 3 與 8 交換</div>
         </div>
       </div>
+      <div class="orig-row" style="margin-top:12px;"><div class="orig-lbl">原始資料</div><div class="chips" id="q1orig"></div></div>
+      <hr class="divider"><div id="q1rows"></div>
+    </div>
+
+    <!-- Q2 (Insertion) -->
+    <div class="card">
+      <div class="sec-hd"><div class="sec-dot d1">2</div><div><div class="sec-name">插入排序法（Insertion Sort）</div><div class="sec-desc">每輪將一個元素插入已排序部分的正確位置，由小至大</div></div></div>
+      <div class="hint-box">
+        <button class="hint-toggle" onclick="toggleHint('h1',this)">💡 排序法說明 <span class="arrow">▾</span></button>
+        <div class="hint-content" id="h1">
+          <div class="hint-step"><span class="hint-num">觀念</span><div class="hint-txt">將陣列分為「已排序」和「未排序」兩部分。每輪取出未排序的第一個元素，往已排序部分從右往左比較，找到正確位置插入。</div></div>
+          <div class="hint-step"><span class="hint-num">第1輪</span><div class="hint-txt">取第2個元素，與第1個比較，決定是否插入到前面。</div></div>
+          <div class="hint-step"><span class="hint-num">第2輪</span><div class="hint-txt">取第3個元素，與已排序的前2個依序比較，找到正確位置插入。</div></div>
+          <div class="hint-step"><span class="hint-num">規律</span><div class="hint-txt">第 N 輪結束後，前 N+1 個元素已排序完成，其餘不動。</div></div>
+          <div class="hint-example">原始：[5, 3, 8, 1, 2]<br>第1輪：[3, 5, 8, 1, 2]  ← 3 插入到 5 前面<br>第2輪：[3, 5, 8, 1, 2]  ← 8 已在正確位置<br>第3輪：[1, 3, 5, 8, 2]  ← 1 插入到最前面<br>第4輪：[1, 2, 3, 5, 8]  ← 2 插入到 1 後面</div>
+        </div>
+      </div>
       <div class="orig-row" style="margin-top:12px;"><div class="orig-lbl">原始資料</div><div class="chips" id="q2orig"></div></div>
       <hr class="divider"><div id="q2rows"></div>
     </div>
 
-    <!-- Q3 -->
+    <!-- Q3 (Bubble) -->
     <div class="card">
       <div class="sec-hd"><div class="sec-dot d3">3</div><div><div class="sec-name">氣泡排序法（Bubble Sort）</div><div class="sec-desc">每輪相鄰元素比較並交換，最大值逐漸浮至末端，由小至大</div></div></div>
       <div class="hint-box">
@@ -227,8 +227,8 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
       <div class="res-max">/ 108 分</div>
       <div class="res-who" id="rWho"></div>
       <div class="sub-scores">
-        <div class="sub-sc"><div class="sub-sc-name">插入排序</div><div class="sub-sc-val" id="r1">—</div></div>
-        <div class="sub-sc"><div class="sub-sc-name">選擇排序</div><div class="sub-sc-val" id="r2">—</div></div>
+        <div class="sub-sc"><div class="sub-sc-name">選擇排序</div><div class="sub-sc-val" id="r1">—</div></div>
+        <div class="sub-sc"><div class="sub-sc-name">插入排序</div><div class="sub-sc-val" id="r2">—</div></div>
         <div class="sub-sc"><div class="sub-sc-name">氣泡排序</div><div class="sub-sc-val" id="r3">—</div></div>
       </div>
       <div class="status-msg" id="statusMsg"></div>
@@ -304,7 +304,7 @@ function startQuiz(){
 
 function gen(){
   nums=rand();
-  answers[1]=insSteps(nums);answers[2]=selSteps(nums);answers[3]=bubSteps(nums);
+  answers[1]=selSteps(nums);answers[2]=insSteps(nums);answers[3]=bubSteps(nums);
   renderOrig('q1orig',nums);renderOrig('q2orig',nums);renderOrig('q3orig',nums);
   renderRows('q1rows',1);renderRows('q2rows',2);renderRows('q3rows',3);
   document.getElementById('resultCard').style.display='none';
