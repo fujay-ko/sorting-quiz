@@ -177,8 +177,8 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
         <button class="hint-toggle" onclick="toggleHint('h2',this)">💡 排序法說明 <span class="arrow">▾</span></button>
         <div class="hint-content" id="h2">
           <div class="hint-step"><span class="hint-num">觀念</span><div class="hint-txt">每輪從未排序的部分掃描一遍，找出最小值，將它與未排序部分的第一個元素交換位置。</div></div>
-          <div class="hint-step"><span class="hint-num">第1輪</span><div class="hint-txt">從全部 7 個找最小值，與第 1 個位置交換。</div></div>
-          <div class="hint-step"><span class="hint-num">第2輪</span><div class="hint-txt">從第 2～7 個找最小值，與第 2 個位置交換。</div></div>
+          <div class="hint-step"><span class="hint-num">第1輪</span><div class="hint-txt">從全部 5 個找最小值，與第 1 個位置交換。</div></div>
+          <div class="hint-step"><span class="hint-num">第2輪</span><div class="hint-txt">從第 2～5 個找最小值，與第 2 個位置交換。</div></div>
           <div class="hint-step"><span class="hint-num">規律</span><div class="hint-txt">第 N 輪結束後，前 N 個位置已放入正確的值，不會再被動到。</div></div>
           <div class="hint-example">原始：[5, 3, 8, 1, 2]<br>第1輪：[1, 3, 8, 5, 2]  ← 最小值 1 與 5 交換<br>第2輪：[1, 2, 8, 5, 3]  ← 最小值 2 與 3 交換<br>第3輪：[1, 2, 3, 5, 8]  ← 最小值 3 與 8 交換</div>
         </div>
