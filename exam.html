@@ -277,8 +277,12 @@ async function submitQuiz(){
   if(url){
     document.getElementById('overlay').classList.add('on');
     try{
-      await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({timestamp:new Date().toLocaleString('zh-TW'),class:cl,seat:se,studentName:nm,score1:s1,score2:s2,score3:s3,total:tot,numbers:nums.join(',')})});
+      const fd=new FormData();
+      fd.append('timestamp',new Date().toLocaleString('zh-TW'));
+      fd.append('class',cl);fd.append('seat',se);fd.append('studentName',nm);
+      fd.append('score1',s1);fd.append('score2',s2);fd.append('score3',s3);
+      fd.append('total',tot);fd.append('numbers',nums.join(','));
+      await fetch(url,{method:'POST',mode:'no-cors',body:fd});
       msg.style.color='var(--correct)';msg.textContent='✓ 成績已傳送至老師的 Google 試算表';
     }catch(e){msg.style.color='var(--wrong)';msg.textContent='✗ 傳送失敗，請截圖後交給老師';}
     document.getElementById('overlay').classList.remove('on');
