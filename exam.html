@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>排序演算法實作評量【考試版】</title>
+<title>排序演算法實作評量【正式測驗版】</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d0f1a;--surface:#161829;--surface2:#1e2138;--border:#2e3358;--accent:#5b8cff;--accent2:#ff6b9d;--accent3:#43e8a0;--text:#e8eaf6;--muted:#7b82b0;--correct:#43e8a0;--wrong:#ff5c7a;--warn:#ffbe45;}
@@ -87,6 +87,8 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 .btn-res{padding:12px 24px;border-radius:8px;font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .15s;}
 .btn-res:hover{border-color:var(--accent);color:var(--accent);}
 .btn-res.primary{background:linear-gradient(135deg,var(--accent),#7b6fff);color:#fff;border-color:transparent;}
+.btn-res.retry{background:linear-gradient(135deg,rgba(255,190,69,0.15),rgba(255,190,69,0.05));color:var(--warn);border-color:rgba(255,190,69,0.4);}
+.btn-res.retry:hover{border-color:var(--warn);}
 #overlay{display:none;position:fixed;inset:0;background:rgba(13,15,26,0.85);z-index:99;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
 #overlay.on{display:flex;}
 .spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent3);border-radius:50%;animation:sp .7s linear infinite;}
@@ -182,6 +184,7 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
       <div class="status-msg" id="statusMsg"></div>
       <div class="res-btns">
         <button class="btn-res" onclick="regenerate()">🎲 再練一次</button>
+        <button class="btn-res retry" id="retryBtn" style="display:none" onclick="retrySend()">↺ 重新傳送成績</button>
         <button class="btn-res primary" onclick="window.print()">列印成績</button>
       </div>
     </div>
@@ -258,36 +261,70 @@ function gradeRound(q,r){
   return pts;
 }
 
+// 暫存待傳資料
+let pendingPayload=null;
+
 async function submitQuiz(){
   document.getElementById('subBtn').disabled=true;
+  // 1. 先批改、顯示成績
   let s1=0,s2=0,s3=0;
   for(let r=1;r<=R;r++){s1+=gradeRound(1,r);s2+=gradeRound(2,r);s3+=gradeRound(3,r);}
   const tot=s1+s2+s3;
+  const cl=document.getElementById('sclass').value;
+  const se=document.getElementById('sseat').value;
+  const nm=document.getElementById('sname').value.trim();
   document.getElementById('rScore').textContent=tot;
   document.getElementById('r1').textContent=`${s1}/36`;
   document.getElementById('r2').textContent=`${s2}/36`;
   document.getElementById('r3').textContent=`${s3}/36`;
-  const cl=document.getElementById('sclass').value;
-  const se=document.getElementById('sseat').value;
-  const nm=document.getElementById('sname').value.trim();
   document.getElementById('rWho').innerHTML=`<strong>${cl}</strong> 班 &nbsp; <strong>${se}</strong> 號 &nbsp; ${nm}`;
   document.getElementById('resultCard').style.display='block';
+  document.getElementById('retryBtn').style.display='none';
+  // 2. 先滾動，再傳送（避免 overlay 蓋住成績時 scroll 失效）
+  setTimeout(()=>document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'}),80);
+  // 3. 暫存資料以備重試
+  pendingPayload={timestamp:new Date().toLocaleString('zh-TW'),class:cl,seat:se,studentName:nm,score1:s1,score2:s2,score3:s3,total:tot,numbers:nums.join(',')};
+  try{localStorage.setItem('examPending',JSON.stringify(pendingPayload));}catch(e){}
+  // 4. 傳送
+  await doSend();
+}
+
+async function doSend(){
   const url=SCRIPT_URL&&SCRIPT_URL!=='貼上您的_Apps_Script_網址_在此'?SCRIPT_URL:'';
   const msg=document.getElementById('statusMsg');
-  if(url){
-    document.getElementById('overlay').classList.add('on');
-    try{
-      const fd=new FormData();
-      fd.append('timestamp',new Date().toLocaleString('zh-TW'));
-      fd.append('class',cl);fd.append('seat',se);fd.append('studentName',nm);
-      fd.append('score1',s1);fd.append('score2',s2);fd.append('score3',s3);
-      fd.append('total',tot);fd.append('numbers',nums.join(','));
-      await fetch(url,{method:'POST',mode:'no-cors',body:fd});
-      msg.style.color='var(--correct)';msg.textContent='✓ 成績已傳送至老師的 Google 試算表';
-    }catch(e){msg.style.color='var(--wrong)';msg.textContent='✗ 傳送失敗，請截圖後交給老師';}
-    document.getElementById('overlay').classList.remove('on');
-  }else{msg.style.color='var(--warn)';msg.textContent='⚠ 尚未設定傳送網址';}
-  document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+  if(!url){msg.style.color='var(--warn)';msg.textContent='⚠ 尚未設定傳送網址';return;}
+  if(!pendingPayload){msg.style.color='var(--wrong)';msg.textContent='✗ 沒有待傳資料';return;}
+  const overlay=document.getElementById('overlay');
+  overlay.classList.add('on');
+  msg.textContent='';
+  try{
+    const fd=new FormData();
+    Object.entries(pendingPayload).forEach(([k,v])=>fd.append(k,v));
+    // 設定 8 秒 timeout，避免永久卡住
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),8000);
+    await fetch(url,{method:'POST',mode:'no-cors',body:fd,signal:ctrl.signal});
+    clearTimeout(tid);
+    msg.style.color='var(--correct)';
+    msg.textContent='✓ 成績已傳送至老師的 Google 試算表';
+    document.getElementById('retryBtn').style.display='none';
+    try{localStorage.removeItem('examPending');}catch(e){}
+  }catch(e){
+    const isTimeout=e.name==='AbortError';
+    msg.style.color='var(--wrong)';
+    msg.textContent=isTimeout?'✗ 傳送逾時，請點「重新傳送成績」再試':'✗ 傳送失敗，請點「重新傳送成績」再試';
+    document.getElementById('retryBtn').style.display='inline-flex';
+  }finally{
+    // 無論如何都移除 overlay，成績一定看得到
+    overlay.classList.remove('on');
+  }
+}
+
+async function retrySend(){
+  document.getElementById('retryBtn').disabled=true;
+  document.getElementById('statusMsg').textContent='重新傳送中…';
+  await doSend();
+  document.getElementById('retryBtn').disabled=false;
 }
 </script>
 </body>
