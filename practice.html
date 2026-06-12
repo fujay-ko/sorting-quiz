@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>排序演算法實作評量【練習版】</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d0f1a;--surface:#161829;--surface2:#1e2138;--border:#2e3358;--accent:#5b8cff;--accent2:#ff6b9d;--accent3:#43e8a0;--text:#e8eaf6;--muted:#7b82b0;--correct:#43e8a0;--wrong:#ff5c7a;--warn:#ffbe45;}
@@ -31,10 +33,13 @@ select option{background:var(--surface2);color:var(--text);}
 input[type=number]{width:52px;padding:10px 4px;border:1.5px solid var(--border);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;text-align:center;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s;-moz-appearance:textfield;}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 input[type=number]:focus{border-color:var(--accent);}
-input[type=number].ok{border-color:var(--correct)!important;background:rgba(67,232,160,0.08)!important;color:var(--correct)!important;}
-input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,92,122,0.08)!important;color:var(--wrong)!important;}
-.btn-start{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent3),#29c87e);color:#0d1a12;border:none;border-radius:12px;font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-top:20px;transition:all .2s;}
-.btn-start:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(67,232,160,0.35);}
+input[type=number].ok{border-color:var(--correct);background:rgba(67,232,160,0.08);color:var(--correct);}
+input[type=number].err{border-color:var(--wrong);background:rgba(255,92,122,0.08);color:var(--wrong);}
+.btn-start{width:100%;padding:16px;margin-top:20px;}
+.btn-submit{width:100%;padding:18px;margin-top:10px;}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),#29c87e);color:#0d1a12;border:none;border-radius:12px;font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(67,232,160,0.35);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 .rules{color:var(--muted);font-size:15px;line-height:2.4;padding-left:20px;}
 .rules strong{color:var(--text);}
 
@@ -86,11 +91,8 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 .ans-row.show{opacity:1;}
 .ans-lbl{font-size:14px;color:var(--muted);}
 .ans-chip{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(67,232,160,0.08);border:1px solid rgba(67,232,160,0.25);border-radius:5px;padding:3px 10px;color:var(--correct);}
-.btn-submit{width:100%;padding:18px;background:linear-gradient(135deg,var(--accent3),#29c87e);color:#0d1a12;border:none;border-radius:12px;font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-top:10px;transition:all .2s;}
-.btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(67,232,160,0.35);}
-.btn-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 #resultCard{display:none;background:linear-gradient(135deg,rgba(91,140,255,0.07),rgba(67,232,160,0.07));border:1px solid var(--border);border-radius:16px;padding:32px;text-align:center;margin-top:12px;}
-.res-big{font-size:76px;font-weight:900;font-family:'JetBrains Mono',monospace;background:linear-gradient(135deg,var(--accent3),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.res-big{font-size:76px;font-weight:900;font-family:'JetBrains Mono',monospace;color:#fff;line-height:1;}
 .res-max{font-size:20px;color:var(--muted);margin-top:2px;}
 .res-who{font-size:14px;color:var(--muted);margin-top:8px;}
 .res-who strong{color:var(--text);}
@@ -110,11 +112,12 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 .spin-txt{font-size:13px;color:var(--text);}
 #quizScreen{display:none;}
 ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media print{body{background:#fff!important;color:#000!important;}body::before{display:none!important;}.card{background:#fff!important;border:1px solid #ccc!important;break-inside:avoid;box-shadow:none!important;}.card::before{display:none!important;}.chip,.stag-score,.stag,.btn-sm,.btn-res,.sub-sc{background:#f5f5f5!important;border-color:#ccc!important;color:#000!important;}.btn-primary{background:#eee!important;color:#000!important;-webkit-text-fill-color:#000!important;}.res-big{-webkit-text-fill-color:#000!important;color:#000!important;}.hint-content.show{display:none!important;}}
 </style>
 </head>
 <body>
 <div id="overlay"><div class="spin"></div><div class="spin-txt">傳送成績中…</div></div>
-<div class="wrap">
+<div class="wrap"><main>
   <header>
     <div class="badge">練習版 · 即時回饋</div>
     <h1>排序演算法實作練習</h1>
@@ -123,9 +126,10 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
 
   <div id="setupScreen">
     <div class="card">
+      <form id="setupForm">
       <div class="setup-grid">
         <div>
-          <label>班級</label>
+          <label for="sclass">班級</label>
           <div class="select-wrap">
             <select id="sclass">
               <option value="">請選擇班級</option>
@@ -136,26 +140,26 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
           </div>
         </div>
         <div>
-          <label>座號</label>
+          <label for="sseat">座號</label>
           <div class="select-wrap">
             <select id="sseat">
               <option value="">請選擇座號</option>
-              <script>for(let i=1;i<=32;i++)document.write(`<option>${i}</option>`);</script>
             </select>
           </div>
         </div>
         <div>
-          <label>學生姓名</label>
+          <label for="sname">學生姓名</label>
           <input type="text" id="sname" placeholder="請輸入姓名">
         </div>
       </div>
-      <button class="btn-start" onclick="startQuiz()">開始練習</button>
+      <button class="btn-start btn-primary" id="btnStart" type="submit">開始練習</button>
+      </form>
     </div>
     <div class="card">
       <ul class="rules">
         <li>系統自動產生 <strong>隨機 7 個數字</strong>，三題共用同一組</li>
         <li>填完一輪的 7 個格子，<strong>立即顯示該輪分數與正確答案</strong></li>
-        <li>每輪滿分 <strong>6 分</strong>，差 1 個扣 1 分，滿分 <strong>108 分</strong></li>
+        <li>第 1~5 輪每輪滿分 <strong>6 分</strong>，第 6 輪滿分 <strong>3~4 分</strong>（視題目），差 1 個扣 1 分，滿分 <strong>100 分</strong></li>
         <li>可點開每題的「排序法說明」查看提示</li>
       </ul>
     </div>
@@ -165,17 +169,17 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
     <div class="info-bar">
       <div class="stag" id="stagEl"></div>
       <div style="display:flex;gap:8px;">
-        <button class="btn-sm" onclick="regenerate()">🎲 重新出題</button>
-        <button class="btn-sm" onclick="clearAll()">清除作答</button>
+        <button class="btn-sm" id="btnRegen">🎲 重新出題</button>
+        <button class="btn-sm" id="btnClear">清除作答</button>
       </div>
     </div>
 
     <!-- Q1 (Selection) -->
-    <div class="card">
+    <section class="card" aria-label="選擇排序法">
       <div class="sec-hd"><div class="sec-dot d2">1</div><div><div class="sec-name">選擇排序法（Selection Sort）</div><div class="sec-desc">每輪從未排序部分找出最小值，移至前方，由小至大</div></div></div>
       <div class="hint-box">
-        <button class="hint-toggle" onclick="toggleHint('h2',this)">💡 排序法說明 <span class="arrow">▾</span></button>
-        <div class="hint-content" id="h2">
+        <button class="hint-toggle" aria-label="展開選擇排序說明" aria-expanded="false">💡 排序法說明 <span class="arrow">▾</span></button>
+        <div class="hint-content">
           <div class="hint-step"><span class="hint-num">觀念</span><div class="hint-txt">每輪從未排序的部分掃描一遍，找出最小值，將它與未排序部分的第一個元素交換位置。</div></div>
           <div class="hint-step"><span class="hint-num">第1輪</span><div class="hint-txt">從全部 5 個找最小值，與第 1 個位置交換。</div></div>
           <div class="hint-step"><span class="hint-num">第2輪</span><div class="hint-txt">從第 2～5 個找最小值，與第 2 個位置交換。</div></div>
@@ -185,14 +189,14 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
       </div>
       <div class="orig-row" style="margin-top:12px;"><div class="orig-lbl">原始資料</div><div class="chips" id="q1orig"></div></div>
       <hr class="divider"><div id="q1rows"></div>
-    </div>
+    </section>
 
     <!-- Q2 (Insertion) -->
-    <div class="card">
+    <section class="card" aria-label="插入排序法">
       <div class="sec-hd"><div class="sec-dot d1">2</div><div><div class="sec-name">插入排序法（Insertion Sort）</div><div class="sec-desc">每輪將一個元素插入已排序部分的正確位置，由小至大</div></div></div>
       <div class="hint-box">
-        <button class="hint-toggle" onclick="toggleHint('h1',this)">💡 排序法說明 <span class="arrow">▾</span></button>
-        <div class="hint-content" id="h1">
+        <button class="hint-toggle" aria-label="展開插入排序說明" aria-expanded="false">💡 排序法說明 <span class="arrow">▾</span></button>
+        <div class="hint-content">
           <div class="hint-step"><span class="hint-num">觀念</span><div class="hint-txt">將陣列分為「已排序」和「未排序」兩部分。每輪取出未排序的第一個元素，往已排序部分從右往左比較，找到正確位置插入。</div></div>
           <div class="hint-step"><span class="hint-num">第1輪</span><div class="hint-txt">取第2個元素，與第1個比較，決定是否插入到前面。</div></div>
           <div class="hint-step"><span class="hint-num">第2輪</span><div class="hint-txt">取第3個元素，與已排序的前2個依序比較，找到正確位置插入。</div></div>
@@ -202,14 +206,14 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
       </div>
       <div class="orig-row" style="margin-top:12px;"><div class="orig-lbl">原始資料</div><div class="chips" id="q2orig"></div></div>
       <hr class="divider"><div id="q2rows"></div>
-    </div>
+    </section>
 
     <!-- Q3 (Bubble) -->
-    <div class="card">
+    <section class="card" aria-label="氣泡排序法">
       <div class="sec-hd"><div class="sec-dot d3">3</div><div><div class="sec-name">氣泡排序法（Bubble Sort）</div><div class="sec-desc">每輪相鄰元素比較並交換，最大值逐漸浮至末端，由小至大</div></div></div>
       <div class="hint-box">
-        <button class="hint-toggle" onclick="toggleHint('h3',this)">💡 排序法說明 <span class="arrow">▾</span></button>
-        <div class="hint-content" id="h3">
+        <button class="hint-toggle" aria-label="展開氣泡排序說明" aria-expanded="false">💡 排序法說明 <span class="arrow">▾</span></button>
+        <div class="hint-content">
           <div class="hint-step"><span class="hint-num">觀念</span><div class="hint-txt">從陣列頭部開始，相鄰兩個元素比較，若左邊大於右邊就交換，讓大的數字像泡泡一樣逐漸「浮」到末端。</div></div>
           <div class="hint-step"><span class="hint-num">第1輪</span><div class="hint-txt">比較第(1,2)、(2,3)…(6,7)，共6次比較，最大值移到最後。</div></div>
           <div class="hint-step"><span class="hint-num">第2輪</span><div class="hint-txt">比較第(1,2)、(2,3)…(5,6)，共5次，第二大值移到倒數第二。</div></div>
@@ -219,148 +223,259 @@ input[type=number].err{border-color:var(--wrong)!important;background:rgba(255,9
       </div>
       <div class="orig-row" style="margin-top:12px;"><div class="orig-lbl">原始資料</div><div class="chips" id="q3orig"></div></div>
       <hr class="divider"><div id="q3rows"></div>
-    </div>
+    </section>
 
-    <button class="btn-submit" id="subBtn" onclick="submitQuiz()">提交並查看總成績</button>
+    <button class="btn-submit btn-primary" id="subBtn">提交並查看總成績</button>
+
     <div id="resultCard">
       <div class="res-big" id="rScore">0</div>
-      <div class="res-max">/ 108 分</div>
+      <div class="res-max" id="resMax"></div>
       <div class="res-who" id="rWho"></div>
       <div class="sub-scores">
         <div class="sub-sc"><div class="sub-sc-name">選擇排序</div><div class="sub-sc-val" id="r1">—</div></div>
         <div class="sub-sc"><div class="sub-sc-name">插入排序</div><div class="sub-sc-val" id="r2">—</div></div>
         <div class="sub-sc"><div class="sub-sc-name">氣泡排序</div><div class="sub-sc-val" id="r3">—</div></div>
       </div>
-      <div class="status-msg" id="statusMsg"></div>
+      <div class="status-msg" id="statusMsg" aria-live="polite"></div>
       <div class="res-btns">
-        <button class="btn-res" onclick="regenerate()">🎲 再練一次</button>
-        <button class="btn-res primary" onclick="window.print()">列印成績</button>
+        <button class="btn-res" id="btnRegen2">🎲 再練一次</button>
+        <button class="btn-res primary" id="btnPrint">列印成績</button>
       </div>
     </div>
   </div>
-</div>
+</main></div>
 
 <script>
 // =====================================================
 // 【老師設定區】將下方換成您的 Apps Script 網址
 const SCRIPT_URL = '貼上您的_Apps_Script_網址_在此';
 // =====================================================
-const N=7,R=6;
-let nums=[],answers={1:[],2:[],3:[]};
+const CONFIG = {
+  N: 7,
+  get R() { return this.N - 1; },
+  get MAX_ROUND_SCORE() { return this.N - 1; },
+  LAST_MAX: [4, 3, 3],
+  get TOTAL_MAX() { return (this.R - 1) * this.MAX_ROUND_SCORE * 3 + this.LAST_MAX.reduce((a, b) => a + b, 0); }
+};
+const { N, R, MAX_ROUND_SCORE, LAST_MAX, TOTAL_MAX } = CONFIG;
 
-function rand(){const a=[];while(a.length<N){const n=Math.floor(Math.random()*97)+2;if(!a.includes(n))a.push(n);}return a;}
-function insSteps(a){a=[...a];const s=[];for(let i=1;i<a.length;i++){let k=a[i],j=i-1;while(j>=0&&a[j]>k){a[j+1]=a[j];j--;}a[j+1]=k;s.push([...a]);}return s;}
-function selSteps(a){a=[...a];const s=[];for(let i=0;i<a.length-1;i++){let m=i;for(let j=i+1;j<a.length;j++)if(a[j]<a[m])m=j;[a[i],a[m]]=[a[m],a[i]];s.push([...a]);}return s;}
-function bubSteps(a){a=[...a];const s=[];for(let i=0;i<a.length-1;i++){for(let j=0;j<a.length-1-i;j++)if(a[j]>a[j+1])[a[j],a[j+1]]=[a[j+1],a[j]];s.push([...a]);}return s;}
+let nums = [], answers = {1:[],2:[],3:[]};
+let debounceTimers = {};
 
-function toggleHint(id,btn){
-  const c=document.getElementById(id);
-  const open=c.classList.toggle('show');
-  btn.classList.toggle('open',open);
+function rand() {
+  const a = [];
+  while (a.length < N) {
+    const n = Math.floor(Math.random() * 97) + 2;
+    if (!a.includes(n)) a.push(n);
+  }
+  return a;
 }
 
-function renderOrig(id,arr){document.getElementById(id).innerHTML=arr.map(n=>`<div class="chip">${n}</div>`).join('');}
-function renderRows(id,q){
-  const c=document.getElementById(id);c.innerHTML='';
-  for(let r=1;r<=R;r++){
-    const d=document.createElement('div');
-    d.innerHTML=`<div class="rnd"><div class="rnd-lbl">第${r}輪→</div><div class="rnd-inputs">${Array.from({length:N},(_,i)=>`<input type="number" id="q${q}r${r}i${i}" placeholder="?" oninput="onInput(${q},${r})">`).join('')}</div><div class="stag-score" id="st${q}${r}"></div></div><div class="ans-row" id="ar${q}${r}"><span class="ans-lbl">正解：</span></div>`;
+function insSteps(a) {
+  a = [...a]; const s = [];
+  for (let i = 1; i < a.length; i++) {
+    let k = a[i], j = i - 1;
+    while (j >= 0 && a[j] > k) { a[j + 1] = a[j]; j--; }
+    a[j + 1] = k; s.push([...a]);
+  }
+  return s;
+}
+
+function selSteps(a) {
+  a = [...a]; const s = [];
+  for (let i = 0; i < a.length - 1; i++) {
+    let m = i;
+    for (let j = i + 1; j < a.length; j++) if (a[j] < a[m]) m = j;
+    [a[i], a[m]] = [a[m], a[i]]; s.push([...a]);
+  }
+  return s;
+}
+
+function bubSteps(a) {
+  a = [...a]; const s = [];
+  for (let i = 0; i < a.length - 1; i++) {
+    for (let j = 0; j < a.length - 1 - i; j++) if (a[j] > a[j + 1]) [a[j], a[j + 1]] = [a[j + 1], a[j]];
+    s.push([...a]);
+  }
+  return s;
+}
+
+function toggleHint(btn) {
+  const content = btn.nextElementSibling;
+  const open = content.classList.toggle('show');
+  btn.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open);
+}
+
+function renderOrig(id, arr) {
+  document.getElementById(id).innerHTML = arr.map(n => `<div class="chip">${n}</div>`).join('');
+}
+
+function renderRows(id, q) {
+  const c = document.getElementById(id); c.innerHTML = '';
+  for (let r = 1; r <= R; r++) {
+    const d = document.createElement('div');
+    const inputs = Array.from({length: N}, (_, i) =>
+      `<input type="number" id="q${q}r${r}i${i}" placeholder="?" aria-label="排序${q}第${r}輪第${i+1}格">`
+    ).join('');
+    d.innerHTML = `<div class="rnd"><div class="rnd-lbl">第${r}輪→</div><div class="rnd-inputs" role="group" aria-label="第${r}輪輸入">${inputs}</div><div class="stag-score" id="st${q}${r}" aria-live="polite"></div></div><div class="ans-row" id="ar${q}${r}"><span class="ans-lbl">正解：</span></div>`;
     c.appendChild(d);
   }
 }
 
-function onInput(q,r){
-  const vals=Array.from({length:N},(_,i)=>{const v=document.getElementById(`q${q}r${r}i${i}`).value;return v===''?null:parseInt(v);});
-  if(vals.some(v=>v===null))return;
-  autoScore(q,r,vals);
+function onInput(q, r) {
+  const key = `${q}-${r}`;
+  clearTimeout(debounceTimers[key]);
+  debounceTimers[key] = setTimeout(() => {
+    const vals = Array.from({length: N}, (_, i) => {
+      const v = document.getElementById(`q${q}r${r}i${i}`).value;
+      return v === '' ? null : parseInt(v, 10);
+    });
+    if (!vals.some(v => v === null)) autoScore(q, r, vals);
+  }, 400);
 }
 
-function autoScore(q,r,vals){
-  const correct=answers[q][Math.min(r-1,answers[q].length-1)];
-  let hits=0;
-  for(let i=0;i<N;i++){
-    const el=document.getElementById(`q${q}r${r}i${i}`);
-    if(vals[i]===correct[i]){hits++;el.classList.add('ok');el.classList.remove('err');}
-    else{el.classList.add('err');el.classList.remove('ok');}
+function autoScore(q, r, vals) {
+  const correct = answers[q][r - 1];
+  let hits = 0;
+  for (let i = 0; i < N; i++) {
+    const el = document.getElementById(`q${q}r${r}i${i}`);
+    if (vals[i] === correct[i]) { hits++; el.className = 'ok'; }
+    else { el.className = 'err'; }
   }
-  const pts=Math.max(0,hits-1);
-  const st=document.getElementById(`st${q}${r}`);
-  st.textContent=`${pts}分`;st.className=`stag-score show ${pts===6?'sp-full':pts>0?'sp-part':'sp-zero'}`;
-  const ar=document.getElementById(`ar${q}${r}`);
-  ar.className='ans-row show';
-  ar.innerHTML=`<span class="ans-lbl">正解：</span>`+correct.map(n=>`<span class="ans-chip">${n}</span>`).join('');
+  const maxPts = r === R ? LAST_MAX[q - 1] : MAX_ROUND_SCORE;
+  const pts = Math.min(maxPts, Math.max(0, hits - 1));
+  const st = document.getElementById(`st${q}${r}`);
+  st.textContent = `${pts}分`;
+  st.className = `stag-score show ${pts === maxPts ? 'sp-full' : pts > 0 ? 'sp-part' : 'sp-zero'}`;
+  const ar = document.getElementById(`ar${q}${r}`);
+  ar.className = 'ans-row show';
+  ar.innerHTML = `<span class="ans-lbl">正解：</span>` + correct.map(n => `<span class="ans-chip">${n}</span>`).join('');
+  return pts;
 }
 
-function startQuiz(){
-  const cl=document.getElementById('sclass').value;
-  const se=document.getElementById('sseat').value;
-  const nm=document.getElementById('sname').value.trim();
-  if(!cl||!se||!nm){alert('請選擇班級、座號並填入姓名');return;}
-  document.getElementById('setupScreen').style.display='none';
-  document.getElementById('quizScreen').style.display='block';
-  document.getElementById('stagEl').innerHTML=`<strong>${cl}</strong> 班 &nbsp; <strong>${se}</strong> 號 &nbsp; ${nm}`;
+function startQuiz() {
+  const cl = document.getElementById('sclass').value;
+  const se = document.getElementById('sseat').value;
+  const nm = document.getElementById('sname').value.trim();
+  if (!cl || !se || !nm) { alert('請選擇班級、座號並填入姓名'); return; }
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('stagEl').innerHTML = `<strong>${cl}</strong> 班 &nbsp; <strong>${se}</strong> 號 &nbsp; ${nm}`;
   gen();
 }
 
-function gen(){
-  nums=rand();
-  answers[1]=selSteps(nums);answers[2]=insSteps(nums);answers[3]=bubSteps(nums);
-  renderOrig('q1orig',nums);renderOrig('q2orig',nums);renderOrig('q3orig',nums);
-  renderRows('q1rows',1);renderRows('q2rows',2);renderRows('q3rows',3);
-  document.getElementById('resultCard').style.display='none';
-  document.getElementById('subBtn').disabled=false;
-  document.getElementById('statusMsg').textContent='';
-}
-function regenerate(){gen();}
-function clearAll(){
-  for(let q=1;q<=3;q++)for(let r=1;r<=R;r++){
-    for(let i=0;i<N;i++){const e=document.getElementById(`q${q}r${r}i${i}`);if(e){e.value='';e.className='';}}
-    const st=document.getElementById(`st${q}${r}`);if(st){st.textContent='';st.className='stag-score';}
-    const ar=document.getElementById(`ar${q}${r}`);if(ar){ar.className='ans-row';ar.innerHTML='<span class="ans-lbl">正解：</span>';}
-  }
-  document.getElementById('resultCard').style.display='none';
-}
-
-function calcRound(q,r){
-  const correct=answers[q][Math.min(r-1,answers[q].length-1)];
-  let hits=0;
-  for(let i=0;i<N;i++){const v=parseInt(document.getElementById(`q${q}r${r}i${i}`).value);if(v===correct[i])hits++;}
-  return Math.max(0,hits-1);
+function gen() {
+  clearAll();
+  nums = rand();
+  answers[1] = selSteps(nums);
+  answers[2] = insSteps(nums);
+  answers[3] = bubSteps(nums);
+  renderOrig('q1orig', nums);
+  renderOrig('q2orig', nums);
+  renderOrig('q3orig', nums);
+  renderRows('q1rows', 1);
+  renderRows('q2rows', 2);
+  renderRows('q3rows', 3);
+  document.getElementById('resMax').textContent = `/ ${TOTAL_MAX} 分`;
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('subBtn').disabled = false;
+  document.getElementById('statusMsg').textContent = '';
 }
 
-async function submitQuiz(){
-  document.getElementById('subBtn').disabled=true;
-  let s1=0,s2=0,s3=0;
-  for(let r=1;r<=R;r++){
-    const v1=Array.from({length:N},(_,i)=>parseInt(document.getElementById(`q1r${r}i${i}`).value)||0);
-    const v2=Array.from({length:N},(_,i)=>parseInt(document.getElementById(`q2r${r}i${i}`).value)||0);
-    const v3=Array.from({length:N},(_,i)=>parseInt(document.getElementById(`q3r${r}i${i}`).value)||0);
-    autoScore(1,r,v1);autoScore(2,r,v2);autoScore(3,r,v3);
-    s1+=calcRound(1,r);s2+=calcRound(2,r);s3+=calcRound(3,r);
+function regenerate() { gen(); }
+
+function clearAll() {
+  for (const key in debounceTimers) clearTimeout(debounceTimers[key]);
+  debounceTimers = {};
+  for (let q = 1; q <= 3; q++) for (let r = 1; r <= R; r++) {
+    for (let i = 0; i < N; i++) {
+      const e = document.getElementById(`q${q}r${r}i${i}`);
+      if (e) { e.value = ''; e.className = ''; }
+    }
+    const st = document.getElementById(`st${q}${r}`);
+    if (st) { st.textContent = ''; st.className = 'stag-score'; }
+    const ar = document.getElementById(`ar${q}${r}`);
+    if (ar) { ar.className = 'ans-row'; ar.innerHTML = '<span class="ans-lbl">正解：</span>'; }
   }
-  const tot=s1+s2+s3;
-  document.getElementById('rScore').textContent=tot;
-  document.getElementById('r1').textContent=`${s1}/36`;
-  document.getElementById('r2').textContent=`${s2}/36`;
-  document.getElementById('r3').textContent=`${s3}/36`;
-  const cl=document.getElementById('sclass').value;
-  const se=document.getElementById('sseat').value;
-  const nm=document.getElementById('sname').value.trim();
-  document.getElementById('rWho').innerHTML=`<strong>${cl}</strong> 班 &nbsp; <strong>${se}</strong> 號 &nbsp; ${nm}`;
-  document.getElementById('resultCard').style.display='block';
-  const url=SCRIPT_URL&&SCRIPT_URL!=='貼上您的_Apps_Script_網址_在此'?SCRIPT_URL:'';
-  const msg=document.getElementById('statusMsg');
-  if(url){
+  document.getElementById('resultCard').style.display = 'none';
+}
+
+async function submitQuiz() {
+  if (!confirm('確定要結算總成績嗎？提交後將無法修改作答。')) return;
+  const subBtn = document.getElementById('subBtn');
+  subBtn.disabled = true;
+  let s1 = 0, s2 = 0, s3 = 0;
+  for (let r = 1; r <= R; r++) {
+    const v1 = Array.from({length: N}, (_, i) => parseInt(document.getElementById(`q1r${r}i${i}`).value, 10) || 0);
+    const v2 = Array.from({length: N}, (_, i) => parseInt(document.getElementById(`q2r${r}i${i}`).value, 10) || 0);
+    const v3 = Array.from({length: N}, (_, i) => parseInt(document.getElementById(`q3r${r}i${i}`).value, 10) || 0);
+    s1 += autoScore(1, r, v1);
+    s2 += autoScore(2, r, v2);
+    s3 += autoScore(3, r, v3);
+  }
+  const tot = s1 + s2 + s3;
+  document.getElementById('rScore').textContent = tot;
+  document.getElementById('r1').textContent = `${s1}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[0]}`;
+  document.getElementById('r2').textContent = `${s2}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[1]}`;
+  document.getElementById('r3').textContent = `${s3}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[2]}`;
+  const cl = document.getElementById('sclass').value;
+  const se = document.getElementById('sseat').value;
+  const nm = document.getElementById('sname').value.trim();
+  document.getElementById('rWho').innerHTML = `<strong>${cl}</strong> 班 &nbsp; <strong>${se}</strong> 號 &nbsp; ${nm}`;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth', block:'start'});
+  const url = SCRIPT_URL && SCRIPT_URL !== '貼上您的_Apps_Script_網址_在此' ? SCRIPT_URL : '';
+  const msg = document.getElementById('statusMsg');
+  if (url) {
+    await new Promise(r => setTimeout(r, 100));
     document.getElementById('overlay').classList.add('on');
-    try{
-      await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({timestamp:new Date().toLocaleString('zh-TW'),class:cl,seat:se,studentName:nm,score1:s1,score2:s2,score3:s3,total:tot,numbers:nums.join(',')})});
-      msg.style.color='var(--correct)';msg.textContent='✓ 成績已傳送至老師的 Google 試算表';
-    }catch(e){msg.style.color='var(--wrong)';msg.textContent='✗ 傳送失敗，請截圖後交給老師';}
+    try {
+      await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({timestamp: new Date().toLocaleString('zh-TW'), class: cl, seat: se, studentName: nm, score1: s1, score2: s2, score3: s3, total: tot, numbers: nums.join(',')})});
+      msg.style.color = 'var(--correct)'; msg.textContent = '✓ 成績已傳送至老師的 Google 試算表';
+    } catch (e) { msg.style.color = 'var(--wrong)'; msg.textContent = '✗ 傳送失敗，請截圖後交給老師'; }
     document.getElementById('overlay').classList.remove('on');
-  }else{msg.style.color='var(--warn)';msg.textContent='⚠ 尚未設定傳送網址';}
-  document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+  } else { msg.style.color = 'var(--warn)'; msg.textContent = '⚠ 尚未設定傳送網址'; }
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth', block:'start'});
 }
+
+// ===== DOM 初始化與事件綁定 =====
+document.addEventListener('DOMContentLoaded', () => {
+  // 填入座號選項
+  const seat = document.getElementById('sseat');
+  for (let i = 1; i <= 32; i++) {
+    const opt = document.createElement('option');
+    opt.textContent = i;
+    seat.appendChild(opt);
+  }
+
+  document.getElementById('resMax').textContent = `/ ${TOTAL_MAX} 分`;
+
+  // 按鈕事件
+  document.getElementById('setupForm').addEventListener('submit', e => { e.preventDefault(); startQuiz(); });
+  document.getElementById('btnRegen').addEventListener('click', regenerate);
+  document.getElementById('btnRegen2').addEventListener('click', regenerate);
+  document.getElementById('btnClear').addEventListener('click', clearAll);
+  document.getElementById('subBtn').addEventListener('click', submitQuiz);
+  document.getElementById('btnPrint').addEventListener('click', () => window.print());
+
+  // 提示切換
+  document.querySelectorAll('.hint-toggle').forEach(btn => {
+    btn.addEventListener('click', () => toggleHint(btn));
+  });
+
+  // 事件委派：動態產生的 input
+  const inputHandler = e => {
+    const el = e.target;
+    if (el.tagName !== 'INPUT' || el.type !== 'number') return;
+    const m = el.id.match(/^q(\d)r(\d)i\d$/);
+    if (m) onInput(parseInt(m[1], 10), parseInt(m[2], 10));
+  };
+  document.getElementById('q1rows').addEventListener('input', inputHandler);
+  document.getElementById('q2rows').addEventListener('input', inputHandler);
+  document.getElementById('q3rows').addEventListener('input', inputHandler);
+});
 </script>
 </body>
 </html>
