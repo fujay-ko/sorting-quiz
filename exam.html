@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>排序演算法實作評量【正式測驗版】</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f1a;--surface:#161829;--surface2:#1e2138;--border:#2e3358;--accent:#5b8cff;--accent2:#ff6b9d;--accent3:#43e8a0;--text:#e8eaf6;--muted:#7b82b0;--correct:#43e8a0;--wrong:#ff5c7a;--warn:#ffbe45;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(91,140,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(91,140,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.wrap{max-width:1200px;margin:0 auto;padding:40px 20px 100px;position:relative;z-index:1;}
+header{text-align:center;margin-bottom:48px;}
+.badge{display:inline-block;background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.3);border-radius:100px;padding:6px 20px;font-size:13px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:16px;}
+h1{font-size:clamp(32px,5vw,52px);font-weight:900;line-height:1.1;background:linear-gradient(135deg,#e8eaf6,#5b8cff,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.sub{color:var(--muted);font-size:16px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));}
+
+/* Setup */
+.setup-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:10px;}
+@media(max-width:560px){.setup-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:360px){.setup-grid{grid-template-columns:1fr;}}
+label{display:block;font-size:13px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+select,input[type=text]{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:16px;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;cursor:pointer;}
+select:focus,input[type=text]:focus{border-color:var(--accent);}
+select option{background:var(--surface2);color:var(--text);}
+.select-wrap{position:relative;}
+.select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:14px;}
+input[type=number]{width:52px;padding:10px 4px;border:1.5px solid var(--border);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;text-align:center;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s;-moz-appearance:textfield;}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+input[type=number]:focus{border-color:var(--accent);}
+input[type=number].ok{border-color:var(--correct);background:rgba(67,232,160,0.08);color:var(--correct);}
+input[type=number].err{border-color:var(--wrong);background:rgba(255,92,122,0.08);color:var(--wrong);}
+input[type=number]:read-only{opacity:.65;cursor:not-allowed;}
+.btn-start{width:100%;padding:16px;margin-top:20px;}
+.btn-submit{width:100%;padding:18px;margin-top:10px;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#7b6fff);color:#fff;border:none;border-radius:12px;font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(91,140,255,0.4);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-submit{background:linear-gradient(135deg,var(--accent3),#29c87e);color:#0d1a12;}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(67,232,160,0.35);}
+.rules{color:var(--muted);font-size:15px;line-height:2.4;padding-left:20px;}
+.rules strong{color:var(--text);}
+
+/* Resume card */
+#resumeCard{background:linear-gradient(135deg,rgba(255,107,157,0.10),rgba(91,140,255,0.10));border:1px solid rgba(255,107,157,0.4);border-radius:16px;padding:28px;margin-bottom:24px;display:none;text-align:center;}
+.resume-msg{font-size:18px;font-weight:700;margin-bottom:18px;}
+.resume-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+/* Info bar */
+.info-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap;}
+.stag{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-size:15px;color:var(--muted);}
+.stag strong{color:var(--text);}
+.btn-sm{padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-family:'Noto Sans TC',sans-serif;font-size:14px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent);}
+.btn-sm:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Section */
+.sec-hd{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.sec-dot{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.d1{background:rgba(91,140,255,0.18);color:var(--accent);}
+.d2{background:rgba(255,107,157,0.18);color:var(--accent2);}
+.d3{background:rgba(67,232,160,0.18);color:var(--accent3);}
+.sec-name{font-size:24px;font-weight:700;}
+.sec-desc{font-size:17px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.orig-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.orig-lbl{font-size:17px;color:var(--muted);width:100px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.chips{display:flex;gap:10px;flex-wrap:wrap;}
+.chip{background:rgba(255,190,69,0.12);border:1px solid rgba(255,190,69,0.35);border-radius:10px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:900;color:var(--warn);min-width:54px;text-align:center;}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.rnd{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.rnd-lbl{font-size:17px;color:var(--muted);width:100px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.rnd-inputs{display:flex;gap:6px;flex-wrap:wrap;}
+.stag-score{font-size:15px;font-family:'JetBrains Mono',monospace;font-weight:700;padding:5px 14px;border-radius:6px;flex-shrink:0;min-width:60px;text-align:center;visibility:hidden;}
+.stag-score.show{visibility:visible;}
+.sp-full{background:rgba(67,232,160,0.15);color:var(--correct);border:1px solid rgba(67,232,160,0.3);}
+.sp-part{background:rgba(255,190,69,0.15);color:var(--warn);border:1px solid rgba(255,190,69,0.3);}
+.sp-zero{background:rgba(255,92,122,0.15);color:var(--wrong);border:1px solid rgba(255,92,122,0.3);}
+.ans-row{display:flex;align-items:center;gap:6px;margin:4px 0 14px 114px;flex-wrap:wrap;visibility:hidden;}
+.ans-row.show{visibility:visible;}
+.ans-lbl{font-size:14px;color:var(--muted);}
+.ans-chip{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(67,232,160,0.08);border:1px solid rgba(67,232,160,0.25);border-radius:5px;padding:3px 10px;color:var(--correct);}
+#resultCard{display:none;background:linear-gradient(135deg,rgba(91,140,255,0.07),rgba(255,107,157,0.07));border:1px solid var(--border);border-radius:16px;padding:32px;text-align:center;margin-top:12px;}
+.res-big{font-size:76px;font-weight:900;font-family:'JetBrains Mono',monospace;color:#fff;line-height:1;}
+.res-max{font-size:20px;color:var(--muted);margin-top:2px;}
+.res-who{font-size:14px;color:var(--muted);margin-top:8px;}
+.res-who strong{color:var(--text);}
+.sub-scores{display:flex;gap:12px;justify-content:center;margin:18px 0 6px;flex-wrap:wrap;}
+.sub-sc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:100px;}
+.sub-sc-name{font-size:13px;color:var(--muted);margin-bottom:3px;}
+.sub-sc-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent3);}
+.status-msg{font-size:14px;color:var(--muted);margin:8px 0;min-height:18px;}
+.res-btns{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.btn-res{padding:12px 24px;border-radius:8px;font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .15s;}
+.btn-res:hover{border-color:var(--accent);color:var(--accent);}
+.btn-res:disabled{opacity:.4;cursor:not-allowed;}
+.btn-res.primary{background:linear-gradient(135deg,var(--accent),#7b6fff);color:#fff;border-color:transparent;}
+.btn-res.retry{background:linear-gradient(135deg,rgba(255,190,69,0.15),rgba(255,190,69,0.05));color:var(--warn);border-color:rgba(255,190,69,0.4);}
+.btn-res.retry:hover{border-color:var(--warn);}
+#overlay{display:none;position:fixed;inset:0;background:rgba(13,15,26,0.85);z-index:99;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+#overlay.on{display:flex;}
+.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent3);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.spin-txt{font-size:13px;color:var(--text);}
+#quizScreen{display:none;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media print{body{background:#fff!important;color:#000!important;}body::before{display:none!important;}.card{background:#fff!important;border:1px solid #ccc!important;break-inside:avoid;box-shadow:none!important;}.card::before{display:none!important;}#resumeCard{display:none!important;}.chip,.stag-score,.stag,.btn-sm,.btn-res,.sub-sc{background:#f5f5f5!important;border-color:#ccc!important;color:#000!important;}.btn-primary{background:#eee!important;color:#000!important;-webkit-text-fill-color:#000!important;}.res-big{-webkit-text-fill-color:#000!important;color:#000!important;}.btn-submit{display:none!important;}.btn-res.retry{display:none!important;}}
+</style>
+</head>
+<body>
+<div id="overlay"><div class="spin"></div><div class="spin-txt">傳送成績中…</div></div>
+<div class="wrap"><main>
+  <header>
+    <div class="badge">測驗版 · 正式評量</div>
+    <h1>排序演算法實作評量</h1>
+    <p class="sub">Selection Sort · Insertion Sort · Bubble Sort</p>
+  </header>
+
+  <div id="setupScreen">
+    <div class="card">
+      <form id="setupForm">
+      <div class="setup-grid">
+        <div>
+          <label for="sclass">班級</label>
+          <div class="select-wrap">
+            <select id="sclass">
+              <option value="">請選擇班級</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="sseat">座號</label>
+          <div class="select-wrap">
+            <select id="sseat">
+              <option value="">請選擇座號</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="sname">學生姓名</label>
+          <input type="text" id="sname" placeholder="請輸入姓名">
+        </div>
+      </div>
+      <button class="btn-start btn-primary" id="btnStart" type="submit">開始作答</button>
+      </form>
+    </div>
+    <div class="card" id="resumeCard">
+      <div class="resume-msg">偵測到上次未完成的作答</div>
+      <div class="resume-btns">
+        <button class="btn-res primary" id="btnResume">繼續上次作答</button>
+        <button class="btn-res" id="btnDiscard">放棄並重新開始</button>
+      </div>
+    </div>
+    <div class="card">
+      <ul class="rules">
+        <li id="ruleN">系統自動產生 <strong>隨機 7 個數字</strong>，三題共用同一組</li>
+        <li>三種排序法各 6 輪，<strong>提交後</strong>才顯示分數與正確答案</li>
+        <li id="ruleScore">第 1~5 輪每輪滿分 <strong>6 分</strong>，最後一輪滿分 <strong>3~4 分</strong>（視演算法），差 1 個扣 1 分，滿分 <strong>100 分</strong></li>
+        <li>提交後成績自動送至老師 Google 試算表</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="quizScreen">
+    <div class="info-bar">
+      <div class="stag" id="stagEl"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm" id="btnRegen">🎲 重新出題</button>
+        <button class="btn-sm" id="btnClear">清除作答</button>
+      </div>
+    </div>
+    <section class="card" aria-label="選擇排序法">
+      <div class="sec-hd"><div class="sec-dot d2">1</div><div><div class="sec-name">選擇排序法（Selection Sort）</div><div class="sec-desc">每輪從未排序部分找出最小值，移至前方，由小至大</div></div></div>
+      <div class="orig-row"><div class="orig-lbl">原始資料</div><div class="chips" id="q1orig"></div></div>
+      <hr class="divider"><div id="q1rows"></div>
+    </section>
+    <section class="card" aria-label="插入排序法">
+      <div class="sec-hd"><div class="sec-dot d1">2</div><div><div class="sec-name">插入排序法（Insertion Sort）</div><div class="sec-desc">每輪將一個元素插入已排序部分的正確位置，由小至大</div></div></div>
+      <div class="orig-row"><div class="orig-lbl">原始資料</div><div class="chips" id="q2orig"></div></div>
+      <hr class="divider"><div id="q2rows"></div>
+    </section>
+    <section class="card" aria-label="氣泡排序法">
+      <div class="sec-hd"><div class="sec-dot d3">3</div><div><div class="sec-name">氣泡排序法（Bubble Sort）</div><div class="sec-desc">每輪相鄰元素比較並交換，最大值逐漸浮至末端，由小至大</div></div></div>
+      <div class="orig-row"><div class="orig-lbl">原始資料</div><div class="chips" id="q3orig"></div></div>
+      <hr class="divider"><div id="q3rows"></div>
+    </section>
+    <button class="btn-submit btn-primary" id="subBtn">提交並批改</button>
+    <div id="resultCard">
+      <div class="res-big" id="rScore">0</div>
+      <div class="res-max" id="resMax"></div>
+      <div class="res-who" id="rWho"></div>
+      <div class="sub-scores">
+        <div class="sub-sc"><div class="sub-sc-name">選擇排序</div><div class="sub-sc-val" id="r1">—</div></div>
+        <div class="sub-sc"><div class="sub-sc-name">插入排序</div><div class="sub-sc-val" id="r2">—</div></div>
+        <div class="sub-sc"><div class="sub-sc-name">氣泡排序</div><div class="sub-sc-val" id="r3">—</div></div>
+      </div>
+      <div class="status-msg" id="statusMsg" aria-live="polite"></div>
+      <div class="res-btns">
+        <button class="btn-res" id="btnRegen2">🎲 再練一次</button>
+        <button class="btn-res retry" id="retryBtn" style="display:none">↺ 重新傳送成績</button>
+        <button class="btn-res primary" id="btnPrint">列印成績</button>
+      </div>
+    </div>
+  </div>
+</main></div>
+
+<script src="config.js"></script>
+<script src="quiz-core.js"></script>
+<script>
+// ===== 測驗版：只做提交式評量，不做逐輪即時批改（詳見 practice.html）=====
+const SCRIPT_URL = SCRIPT_URL_EXAM;
+const { N, R, MAX_ROUND_SCORE, LAST_MAX, TOTAL_MAX } = CONFIG;
+
+let nums = [], answers = {1:[],2:[],3:[]};
+let pendingPayload = null;
+let submitted = false;
+let draftTimer = null;
+let lastScores = null;
+const LS = { student: 'sq_student', draft: 'sq_exam_draft' };
+
+// ---- 作答流程 ----
+function readIdentity() {
+  return {
+    cl: document.getElementById('sclass').value,
+    se: document.getElementById('sseat').value,
+    nm: document.getElementById('sname').value.trim()
+  };
+}
+
+function startQuiz() {
+  const idt = readIdentity();
+  if (!idt.cl || !idt.se || !idt.nm) { alert('請選擇班級、座號並填入姓名'); return; }
+  saveStudent(LS.student, idt.cl, idt.se, idt.nm);
+  renderQuiz(rand(N), idt);
+}
+
+function renderQuiz(numArr, idt) {
+  clearAll();
+  nums = numArr;
+  answers = makeAnswers(nums);
+  renderChips(document.getElementById('q1orig'), nums);
+  renderChips(document.getElementById('q2orig'), nums);
+  renderChips(document.getElementById('q3orig'), nums);
+  renderRows('q1rows', 1, R, N, false);
+  renderRows('q2rows', 2, R, N, false);
+  renderRows('q3rows', 3, R, N, false);
+  document.getElementById('resMax').textContent = `/ ${TOTAL_MAX} 分`;
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('subBtn').disabled = false;
+  document.getElementById('statusMsg').textContent = '';
+  pendingPayload = null;
+  lastScores = null;
+  document.getElementById('retryBtn').style.display = 'none';
+  submitted = false;
+  setInputsReadOnly(false);
+  setLocked(false);
+  document.getElementById('stagEl').innerHTML = `<strong>${esc(idt.cl)}</strong> 班 &nbsp; <strong>${esc(idt.se)}</strong> 號 &nbsp; ${esc(idt.nm)}`;
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  hideResumeCard();
+}
+
+function gen() {
+  const idt = readIdentity();
+  if (!idt.cl || !idt.se || !idt.nm) { alert('請選擇班級、座號並填入姓名'); return; }
+  saveStudent(LS.student, idt.cl, idt.se, idt.nm);
+  renderQuiz(rand(N), idt);
+}
+
+function regenerate() {
+  clearDraft();
+  clearPending();
+  gen();
+}
+
+function clearAll() {
+  for (let q = 1; q <= 3; q++) for (let r = 1; r <= R; r++) {
+    for (let i = 0; i < N; i++) {
+      const e = document.getElementById(`q${q}r${r}i${i}`);
+      if (e) { e.value = ''; e.className = ''; }
+    }
+    const st = document.getElementById(`st${q}${r}`);
+    if (st) { st.textContent = ''; st.className = 'stag-score'; }
+    const ar = document.getElementById(`ar${q}${r}`);
+    if (ar) { ar.className = 'ans-row'; ar.innerHTML = '<span class="ans-lbl">正解：</span>'; }
+  }
+  document.getElementById('resultCard').style.display = 'none';
+}
+
+// ---- 草稿暫存（避免刷新資料全失） ----
+function clearDraft() { try { localStorage.removeItem(LS.draft); } catch (e) {} }
+function clearPending() { try { localStorage.removeItem('examPending'); } catch (e) {} }
+
+function collectCells() {
+  const cells = {};
+  for (let q = 1; q <= 3; q++) for (let r = 1; r <= R; r++) for (let i = 0; i < N; i++) {
+    const el = document.getElementById(`q${q}r${r}i${i}`);
+    if (el && el.value !== '') cells[`${q}-${r}-${i}`] = el.value;
+  }
+  return cells;
+}
+
+function saveDraft() {
+  const idt = readIdentity();
+  const d = { nums, identity: idt, cells: collectCells(), submitted, scores: lastScores };
+  try { localStorage.setItem(LS.draft, JSON.stringify(d)); } catch (e) {}
+}
+
+function loadDraft() {
+  try { return JSON.parse(localStorage.getItem(LS.draft) || 'null'); } catch (e) { return null; }
+}
+
+function scheduleDraftSave() { clearTimeout(draftTimer); draftTimer = setTimeout(saveDraft, 400); }
+
+function fillCells(cells) {
+  if (!cells) return;
+  for (const k in cells) {
+    const m = k.match(/^(\d)-(\d+)-(\d+)$/);
+    if (!m) continue;
+    const el = document.getElementById(`q${m[1]}r${m[2]}i${m[3]}`);
+    if (el) el.value = cells[k];
+  }
+}
+
+function hideResumeCard() {
+  const rc = document.getElementById('resumeCard');
+  if (rc) rc.style.display = 'none';
+}
+
+function resumeUnsubmitted() {
+  const draft = loadDraft();
+  if (!draft || !Array.isArray(draft.nums)) return;
+  const idt = draft.identity || readIdentity();
+  setIdentityForm(idt);
+  renderQuiz(draft.nums, idt);
+  fillCells(draft.cells);
+  saveDraft();
+}
+
+function resumeSubmitted(draft) {
+  const idt = draft.identity || readIdentity();
+  setIdentityForm(idt);
+  renderQuiz(draft.nums, idt);
+  fillCells(draft.cells);
+  let s1 = 0, s2 = 0, s3 = 0;
+  for (let r = 1; r <= R; r++) { s1 += gradeRound(1, r); s2 += gradeRound(2, r); s3 += gradeRound(3, r); }
+  const tot = s1 + s2 + s3;
+  lastScores = { s1, s2, s3, tot };
+  document.getElementById('rScore').textContent = tot;
+  document.getElementById('r1').textContent = `${s1}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[0]}`;
+  document.getElementById('r2').textContent = `${s2}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[1]}`;
+  document.getElementById('r3').textContent = `${s3}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[2]}`;
+  document.getElementById('rWho').innerHTML = `<strong>${esc(idt.cl)}</strong> 班 &nbsp; <strong>${esc(idt.se)}</strong> 號 &nbsp; ${esc(idt.nm)}`;
+  document.getElementById('resultCard').style.display = 'block';
+  submitted = true;
+  document.getElementById('subBtn').disabled = true;
+  setInputsReadOnly(true);
+  if (!CONFIG.ALLOW_RETAKE) setLocked(true);
+  try {
+    const p = JSON.parse(localStorage.getItem('examPending') || 'null');
+    if (p && p.numbers) { pendingPayload = p; document.getElementById('retryBtn').style.display = 'inline-flex'; }
+  } catch (e) {}
+  document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ---- 計分 ----
+function gradeRound(q, r) {
+  const correct = answers[q][r - 1];
+  const vals = getRoundVals(q, r, N, true);
+  const maxPts = r === R ? LAST_MAX[q - 1] : MAX_ROUND_SCORE;
+  const { pts } = scoreRound(correct, vals, LAST_MAX[q - 1], MAX_ROUND_SCORE, r === R);
+  markRound(q, r, correct, vals, pts, maxPts);
+  return pts;
+}
+
+// ---- 提交與上傳 ----
+function validUrl() {
+  return SCRIPT_URL && SCRIPT_URL !== '貼上您的_Apps_Script_網址_在此' ? SCRIPT_URL : '';
+}
+
+async function submitQuiz() {
+  if (!confirm('確定要提交成績嗎？提交後將無法修改作答。')) return;
+  document.getElementById('subBtn').disabled = true;
+  let s1 = 0, s2 = 0, s3 = 0;
+  for (let r = 1; r <= R; r++) { s1 += gradeRound(1, r); s2 += gradeRound(2, r); s3 += gradeRound(3, r); }
+  const tot = s1 + s2 + s3;
+  lastScores = { s1, s2, s3, tot };
+  const idt = readIdentity();
+  document.getElementById('rScore').textContent = tot;
+  document.getElementById('r1').textContent = `${s1}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[0]}`;
+  document.getElementById('r2').textContent = `${s2}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[1]}`;
+  document.getElementById('r3').textContent = `${s3}/${MAX_ROUND_SCORE * (R - 1) + LAST_MAX[2]}`;
+  document.getElementById('rWho').innerHTML = `<strong>${esc(idt.cl)}</strong> 班 &nbsp; <strong>${esc(idt.se)}</strong> 號 &nbsp; ${esc(idt.nm)}`;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('retryBtn').style.display = 'none';
+  submitted = true;
+  setInputsReadOnly(true);
+  if (!CONFIG.ALLOW_RETAKE) setLocked(true);
+  pendingPayload = {
+    timestamp: new Date().toLocaleString('zh-TW'),
+    class: idt.cl, seat: idt.se, studentName: idt.nm,
+    score1: s1, score2: s2, score3: s3, total: tot,
+    numbers: nums.join(','), token: SHARED_TOKEN
+  };
+  try { localStorage.setItem('examPending', JSON.stringify(pendingPayload)); } catch (e) {}
+  saveDraft();
+  // 讓瀏覽器先渲染成績，再顯示 overlay 傳送
+  await new Promise(r => setTimeout(r, 100));
+  await doSend();
+}
+
+async function doSend() {
+  const url = validUrl();
+  const msg = document.getElementById('statusMsg');
+  if (!url) { msg.style.color = 'var(--warn)'; msg.textContent = '⚠ 尚未設定傳送網址'; return; }
+  if (!pendingPayload) { msg.style.color = 'var(--wrong)'; msg.textContent = '✗ 沒有待傳資料'; return; }
+  const overlay = document.getElementById('overlay');
+  overlay.classList.add('on');
+  msg.textContent = '';
+  const res = await sendScore(url, pendingPayload);
+  overlay.classList.remove('on');
+  if (res.ok) {
+    msg.style.color = 'var(--correct)';
+    msg.textContent = '✓ 成績已傳送至老師的 Google 試算表。完成後可列印成績或直接關閉視窗。';
+    document.getElementById('retryBtn').style.display = 'none';
+    clearPending();
+  } else {
+    msg.style.color = 'var(--wrong)';
+    msg.textContent = res.timedOut ? '✗ 傳送逾時，請點「重新傳送成績」再試' : '✗ 傳送失敗，請點「重新傳送成績」再試';
+    document.getElementById('retryBtn').style.display = 'inline-flex';
+  }
+}
+
+async function retrySend() {
+  document.getElementById('retryBtn').disabled = true;
+  document.getElementById('statusMsg').textContent = '重新傳送中…';
+  await doSend();
+  document.getElementById('retryBtn').disabled = false;
+}
+
+function setInputsReadOnly(ro) {
+  document.querySelectorAll('#quizScreen input[type=number]').forEach(e => e.readOnly = ro);
+}
+
+function setLocked(locked) {
+  document.getElementById('btnRegen').disabled = locked;
+  document.getElementById('btnClear').disabled = locked;
+  document.getElementById('btnRegen2').disabled = locked;
+}
+
+function setIdentityForm(idt) {
+  if (!idt) return;
+  document.getElementById('sclass').value = idt.cl || '';
+  document.getElementById('sseat').value = idt.se || '';
+  document.getElementById('sname').value = idt.nm || '';
+}
+
+// ===== DOM 初始化與事件綁定 =====
+document.addEventListener('DOMContentLoaded', () => {
+  fillOptions('sclass', CLASSES);
+  fillOptions('sseat', Array.from({ length: SEAT_MAX }, (_, i) => i + 1));
+
+  // 記憶上次學生資料
+  setIdentityForm(readIdentity() && loadStudent(LS.student));
+
+  document.getElementById('resMax').textContent = `/ ${TOTAL_MAX} 分`;
+
+  // 由設定動態生成規則文字
+  document.getElementById('ruleN').innerHTML = `系統自動產生 <strong>隨機 ${N} 個數字</strong>，三題共用同一組`;
+  document.getElementById('ruleScore').innerHTML =
+    `第 1~${R - 1} 輪每輪滿分 <strong>${MAX_ROUND_SCORE} 分</strong>，` +
+    `最後一輪滿分 <strong>選擇 ${LAST_MAX[0]} 分</strong>／<strong>插入 ${LAST_MAX[1]} 分</strong>／<strong>氣泡 ${LAST_MAX[2]} 分</strong>，` +
+    `差 1 個扣 1 分，滿分 <strong>${TOTAL_MAX} 分</strong>`;
+
+  document.getElementById('setupForm').addEventListener('submit', e => { e.preventDefault(); startQuiz(); });
+  document.getElementById('btnRegen').addEventListener('click', regenerate);
+  document.getElementById('btnRegen2').addEventListener('click', regenerate);
+  document.getElementById('btnClear').addEventListener('click', () => { clearAll(); clearDraft(); });
+  document.getElementById('subBtn').addEventListener('click', submitQuiz);
+  document.getElementById('retryBtn').addEventListener('click', retrySend);
+  document.getElementById('btnPrint').addEventListener('click', () => window.print());
+  document.getElementById('btnResume').addEventListener('click', resumeUnsubmitted);
+  document.getElementById('btnDiscard').addEventListener('click', () => { clearDraft(); clearPending(); hideResumeCard(); });
+
+  // 輸入時自動暫存草稿
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (!el || el.tagName !== 'INPUT' || el.type !== 'number') return;
+    if (!/^q[123]r\d+i\d+$/.test(el.id)) return;
+    if (!submitted) scheduleDraftSave();
+  });
+
+  // 載入時檢查是否有未完成的作答／已提交的成績
+  const draft = loadDraft();
+  if (draft && Array.isArray(draft.nums)) {
+    if (draft.submitted) {
+      resumeSubmitted(draft);
+    } else {
+      setIdentityForm(draft.identity || loadStudent(LS.student));
+      document.getElementById('resumeCard').style.display = 'block';
+    }
+  }
+});
+</script>
+</body>
+</html>
